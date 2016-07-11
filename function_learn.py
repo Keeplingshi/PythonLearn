@@ -65,3 +65,35 @@ def move(x, y, step, angle=0):
 
 r = move(100, 100, 60, math.pi / 6)
 print(r)
+print("======================================")
+
+#默认参数，n默认为2
+#注意：默认参数写在后面
+def power(x,n=2):
+    s=1
+    while n>0:
+        n=n-1
+        s=s*x
+    return s
+
+print(power(5))
+print(power(5,3))
+print("======================================")
+
+#有多个默认参数时，调用的时候，既可以按顺序提供默认参数，比如调用enroll('Bob', 'M', 7)，意思是，除了name，gender这两个参数外，最后1个参数应用在参数age上，city参数由于没有提供，仍然使用默认值。
+#也可以不按顺序提供部分默认参数。当不按顺序提供部分默认参数时，需要把参数名写上。比如调用enroll('Adam', 'M', city='Tianjin')，意思是，city参数用传进去的值，其他默认参数继续使用默认值。
+#默认参数必须指向不变对象！
+def enroll(name, gender, age=6, city='Beijing'):
+    print('name:', name)
+    print('gender:', gender)
+    print('age:', age)
+    print('city:', city)
+    return
+enroll('Sarah', 'F')
+print("======================================")
+enroll('Bob', 'M', 7)
+print("======================================")
+enroll('Adam', 'M', 'Tianjin')
+print("======================================")
+enroll('Adam', 'M', city='Tianjin')
+print("======================================")
