@@ -97,3 +97,33 @@ enroll('Adam', 'M', 'Tianjin')
 print("======================================")
 enroll('Adam', 'M', city='Tianjin')
 print("======================================")
+
+
+def cacl(numbers):
+    sum=0
+    for n in numbers:
+        sum=sum+n*n
+    return sum
+    
+#print(cacl(3))   #报错
+print(cacl((1,2,3,4)))
+print(cacl([1,2,3,4]))
+
+def cacl2(*numbers):
+    sum=0
+    for n in numbers:
+        sum=sum+n*n
+    return sum
+
+print(cacl2(3))
+print(cacl2(1,2,3,4))
+nums = [1, 2, 3,4]
+print(cacl2(*nums))
+
+def person(name,age,**kw):
+    print('name:', name, 'age:', age, 'other:', kw)
+    return
+    
+person('Michael', 30)
+person('Bob', 35, city='Beijing')
+person('Adam', 45, gender='M', job='Engineer')
