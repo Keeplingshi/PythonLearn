@@ -1,9 +1,17 @@
+<form action="{% url 'polls:vote_form' %}" method="post">
+{% csrf_token %}
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}
-        <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+        <li>{{ question.question_text }}</li>
+        {% for choice in question.choice_set.all %}
+            <input type="radio" name="choice_{{question.id  }}" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+            <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+        {% endfor %}
     {% endfor %}
+    <input type="submit" value="Vote" />
     </ul>
 {% else %}
     <p>No polls are available.</p>
 {% endif %}
+</form>
