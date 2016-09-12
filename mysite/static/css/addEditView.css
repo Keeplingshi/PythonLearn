@@ -1,0 +1,16 @@
+/*
+* addEditView
+* @author chen
+*
+* 增改查弹出页面用到的css
+*/
+
+.lesta-150 {color: #073662;height: 40px;width: 130px;text-align: right;padding-right: 4px;}
+.lestb {background: #FFF;color: #333;height: 40px;padding-left: 7px;text-align: left;}
+.input_text_a{color: #858585;background-color: #fff;border: 1px solid #ccc;padding: 5px 4px;line-height: 1.2;font-size: 14px;font-family: inherit;border-radius:5px;}
+.input_text_b{width: 50px;text-align: center;color: #858585;background-color: #fff;border: 1px solid #ccc;padding: 5px 4px;line-height: 1.2;font-size: 14px;font-family: inherit;border-radius:5px;}
+
+.select_style{padding: 3px 4px;height: 30px;width: 100px;}
+.select_style option{height:25px;}
+
+.line{  background: #555;height: 6px;  }

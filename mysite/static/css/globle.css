@@ -1,0 +1,28 @@
+
+/*========列表数据操作按钮=======*/
+input[type="button"],.btnStyle {font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;}
+.btn_list_view,.btn_list_update,.btn_list_delete,.btn_list_tj,.btn_list_examine,.btn_list_superLogin,.btn_list_set,.btn_list_techset,.btn_list_scheset,.btn_list_link,.btn_list_lock,.btn_list_unlock,.btn_list_qxpz,
+.btn_list_apply,.btn_list_rejected,.btn_list_onlentry,.btn_list_ranking,.btn_list_cjlr,.btn_list_proset,.btn_list_import,.btn_list_records,.btn_list_attend,.btn_list_message{border:none; line-height:28px; padding-right:10px; cursor:pointer; color:#0066B0;}
+.btn_list_view{background:url(../images/basetheme/list/detail.gif) left center no-repeat; padding-left:18px;}/*查看详细*/
+.btn_list_update{background:url(../images/basetheme/list/edit.gif) left center no-repeat; text-indent:12px;}/*修改*/
+.btn_list_delete{background:url(../images/basetheme/list/del.gif) left center no-repeat; text-indent:9px;}/*删除*/
+.btn_list_tj{background:url(../images/basetheme/list/tj.gif) left center no-repeat; text-indent:18px;}/*提交*/
+.btn_list_examine{background:url(../images/basetheme/list/examine.gif) left center no-repeat; text-indent:18px;}/*审批*/
+.btn_list_superLogin{background:url(../images/basetheme/list/superLogin.gif) left center no-repeat; text-indent:18px;}/*超级登陆*/
+.btn_list_set{background:url(../images/basetheme/list/set.gif) left center no-repeat; text-indent:20px;}/*班级设置*/
+.btn_list_techset{background:url(../images/basetheme/list/techset.gif) left center no-repeat; text-indent:18px;}/*任课设置或教师设置*/
+.btn_list_scheset{background:url(../images/basetheme/list/scheset.gif) left center no-repeat; text-indent:18px;}/*设置课表或编辑课表*/
+.btn_list_link{background:url(../images/basetheme/list/link.gif) left center no-repeat; text-indent:20px;}/*学生转班*/
+.btn_list_lock{background:url(../images/basetheme/list/lock.gif) left center no-repeat; text-indent:18px;}/*锁定*/
+.btn_list_unlock{background:url(../images/basetheme/list/unlock.gif) left center no-repeat; text-indent:18px;}/*解锁*/
+.btn_list_qxpz{background:url(../images/basetheme/list/qxpz.gif) left center no-repeat; text-indent:18px;}/*权限配置*/
+.btn_list_apply{background:url(../images/basetheme/list/apply.gif) left center no-repeat; text-indent:18px;}/*申请*/
+.btn_list_rejected{background:url(../images/basetheme/list/rejected.gif) left center no-repeat; text-indent:18px;}/*驳回*/
+.btn_list_onlentry{background:url(../images/basetheme/list/onlentry.gif) left center no-repeat; text-indent:18px;}/*在线录入*/
+.btn_list_ranking{background:url(../images/basetheme/list/ranking.gif) left center no-repeat; text-indent:18px;}/*成绩排名*/
+.btn_list_cjlr{background:url(../images/basetheme/list/cjlr.gif) left center no-repeat; text-indent:18px;}/*成绩录入*/
+.btn_list_proset{background:url(../images/basetheme/list/proset.gif) left center no-repeat; text-indent:18px;}/*流程定义*/
+.btn_list_import{background:url(../images/basetheme/list/import.gif) left center no-repeat; text-indent:18px;}/*物品入库*/
+.btn_list_records{background:url(../images/basetheme/list/records.gif) left center no-repeat; text-indent:18px;}/*入库记录或者会议纪要*/
+.btn_list_attend{background:url(../images/basetheme/list/attend.gif) left center no-repeat; text-indent:18px;}/*出席情况*/
+.btn_list_message{background:url(../images/basetheme/list/message.gif) left center no-repeat; text-indent:18px;}/*发送短信*/

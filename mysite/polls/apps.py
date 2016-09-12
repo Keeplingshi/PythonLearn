@@ -1,5 +1,5 @@
-from django.apps import AppConfig
+import django.apps
 
 
-class PollsConfig(AppConfig):
+class PollsConfig(django.apps.AppConfig):
     name = 'polls'
