@@ -4,12 +4,16 @@ from polls import views
 
 urlpatterns = [
     # ex : /polls/
+    # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': mysite.settings.STATIC_URL}),
+    # 管理页面
+    url(r'^$', views.admin),
+    url(r'userList/$', views.user_list, name='userList'),
     # 主页面
-    url(r'^$', views.index, name='index'),
+    # url(r'index/$', views.index, name='index'),
     # 投票结果页面
-    url(r'results/$', views.results, name='results'),
+    # url(r'results/$', views.results, name='results'),
     # 投票页面
-    url(r'vote_form/$', views.vote_form, name='vote_form'),
+    # url(r'vote_form/$', views.vote_form, name='vote_form'),
 
 
     # # ex : /polls/5/

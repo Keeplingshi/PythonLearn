@@ -14,10 +14,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import include, url
-from django.contrib import admin
 
 urlpatterns = [
     url(r'^polls_admin/', include('polls.urls', namespace="polls")),
+
+    # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': mysite.settings.STATIC_URL}),
     # url(r'^portal/', portal.site.urls),
     # url(r'^portal/', include('portal.urls', namespace="portal")),
 ]
