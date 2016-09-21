@@ -14,6 +14,8 @@
     <script src="/static/ui/ace/assets/js/ace.min.js"></script>
     <script src="/static/ui/layer/layer.js"></script>
     <script src="/static/ui/ace/assets/js/ace-extra.min.js"></script>
+
+
 </head>
 <body>
 		<div class="navbar navbar-default" id="navbar" style="height: 45px">
@@ -113,7 +115,7 @@
 
        $("#user_manage").click(function(){
 
-			$.post("/polls_admin/userList/", function(result){
+			$.post("/polls/userList/", function(result){
 				$("#content_page").empty();
 				$("#content_page").html(result);
 			});

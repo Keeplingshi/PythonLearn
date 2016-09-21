@@ -6,7 +6,10 @@ urlpatterns = [
     # ex : /polls/
     # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': mysite.settings.STATIC_URL}),
     # 管理页面
-    url(r'^$', views.admin),
+    url(r'^$', views.login),
+    url(r'login/$', views.login, name='login'),
+    url(r'validate_login/$', views.validate_login, name='validate_login'),
+    url(r'admin/$', views.admin, name='admin'),
     url(r'userList/$', views.user_list, name='userList'),
     # 主页面
     # url(r'index/$', views.index, name='index'),

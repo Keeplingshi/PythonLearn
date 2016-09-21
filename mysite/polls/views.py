@@ -3,11 +3,39 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
-from polls.models import Questionnaire
+from polls.models import Questionnaire, User
+
+
+# 登录页面
+def login(request):
+
+    return render(request, 'polls/login.html')
+
+
+# 登录验证
+def validate_login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    print(username)
+    print(password)
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            HttpResponseRedirect('/polls/admin')
+        else:
+            print("Your account has been disabled!")
+    else:
+        print("Your username and password were incorrect.")
+
+    return render(request, 'polls/login.html')
 
 
 # 管理页面首页面
+@login_required(login_url='/polls/login/')
 def admin(request):
 
     return render(request, 'polls/admin.html')
@@ -21,7 +49,7 @@ def user_list(request):
 
     page = request.GET.get('page')
     try:
-        contacts = paginator.page(page)
+        contacts = paginator.page(2)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
         contacts = paginator.page(1)

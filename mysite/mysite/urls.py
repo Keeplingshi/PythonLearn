@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 
 urlpatterns = [
-    url(r'^polls_admin/', include('polls.urls', namespace="polls")),
+    url(r'^polls/', include('polls.urls', namespace="polls")),
 
     # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': mysite.settings.STATIC_URL}),
     # url(r'^portal/', portal.site.urls),

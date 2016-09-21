@@ -1,4 +1,0 @@
-urlpatterns = [
-    # ex : /polls/
-
-]
