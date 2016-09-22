@@ -1,17 +1,9 @@
 # coding=utf-8
 from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your models here.
-# 用户信息表
-class User(models.Model):
-    user_name = models.CharField(max_length=100)
-    pass_word = models.CharField(max_length=100)
-    permission = models.IntegerField(default=0)
-    # choice = models.ManyToManyField(Choice)
-
-    def __unicode__(self):
-        return self.user_name
 
 
 # 调查问卷

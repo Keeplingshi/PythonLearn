@@ -36,7 +36,7 @@
 							<a data-toggle="dropdown" href="#" class="dropdown-toggle">
 								<img class="nav-user-photo" src="/static/ui/ace/assets/avatars/user.jpg" alt="Jason's Photo" />
 								<span class="user-info">
-									<small>欢迎光临,</small>姓名
+									<small>欢迎光临,</small>{{ user }}
 								</span>
 								<i class="icon-caret-down"></i>
 							</a>
@@ -111,6 +111,11 @@
 				$(this).addClass("active");
 
 			}
+		});
+
+        //登出
+		$("#user_logout").click(function(){
+			window.location.href="${pageContext.request.contextPath}/logout";
 		});
 
        $("#user_manage").click(function(){

@@ -1,44 +1,47 @@
 # coding=utf-8
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth import authenticate, login
+from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
-from polls.models import Questionnaire, User
+from polls.models import Questionnaire
 
 
-# 登录页面
+# 验证登录
 def login(request):
-
-    return render(request, 'polls/login.html')
-
-
-# 登录验证
-def validate_login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    print(username)
-    print(password)
-    user = authenticate(username=username, password=password)
+    username = request.POST.get('username')
+    password = request.POST.get('password')
+    user = auth.authenticate(username=username, password=password)
     if user is not None:
         if user.is_active:
-            login(request, user)
-            HttpResponseRedirect('/polls/admin')
+            auth.login(request, user)
+            return HttpResponseRedirect('/polls/admin')
         else:
             print("Your account has been disabled!")
     else:
-        print("Your username and password were incorrect.")
+        # 如果存在用户名密码，但不正确，则提示
+        if username is not None and password is not None:
+            context = {'isSuccess': 1}
+            return render(request, 'polls/login.html', context)
 
-    return render(request, 'polls/login.html')
+        return render(request, 'polls/login.html')
+
+
+# 退出登录
+def logout(request):
+  auth.logout(request)
+
+  return HttpResponseRedirect("/polls/login")
 
 
 # 管理页面首页面
-@login_required(login_url='/polls/login/')
+@login_required
 def admin(request):
-
-    return render(request, 'polls/admin.html')
+    user = auth.get_user(request)
+    context = {'user': user}
+    return render(request, 'polls/admin.html', context)
 
 
 # 账号管理页面
