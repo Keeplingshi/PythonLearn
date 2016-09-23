@@ -1,10 +1,11 @@
 # coding=utf-8
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from polls.models import Questionnaire
 
@@ -35,6 +36,28 @@ def logout(request):
 
   return HttpResponseRedirect("/polls/login")
 
+
+# 修改密码页面
+@login_required
+def modify_password_view(request):
+    user = auth.get_user(request)
+    context = {'user': user}
+    return render(request, 'polls/modifyPasswordView.html', context)
+
+# 修改密码
+@login_required
+def modify_password(request):
+    user = auth.get_user(request)
+    old_password = request.POST.get('old_password')
+    new_password = request.POST.get('password')
+    if User.check_password(user, old_password):
+        User.set_password(user, new_password)
+        User.save(user)
+        # 重新登录
+        auth.login(request, user)
+        return HttpResponse("success")
+
+    return HttpResponse("error")
 
 # 管理页面首页面
 @login_required

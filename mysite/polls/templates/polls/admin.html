@@ -15,7 +15,15 @@
     <script src="/static/ui/layer/layer.js"></script>
     <script src="/static/ui/ace/assets/js/ace-extra.min.js"></script>
 
-
+    <script>
+        $(function(){
+            //默认加载用户列表
+            $.post("/polls/userList/", function(result){
+                $("#content_page").empty();
+                $("#content_page").html(result);
+            });
+        });
+    </script>
 </head>
 <body>
 		<div class="navbar navbar-default" id="navbar" style="height: 45px">
@@ -131,6 +139,22 @@
 			//$.post("/polls_admin/userList/", function(result){
 				$("#content_page").empty();
 			//});
+		});
+
+        //修改密码
+		$("#user_password").click(function(){
+			//console.info($(this).attr("value"));
+		    parent.layer.open({
+		        type: 2,
+		        title: '修改密码',
+		        shadeClose: true,
+		        area : ['360px' , '320px'],
+		        offset: ['100px'],
+		        content: '/polls/modify_password_view',
+		        end: function(){
+
+		        }
+		    });
 		});
 {% comment %}
 		//修改密码

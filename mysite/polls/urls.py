@@ -9,6 +9,8 @@ urlpatterns = [
     # url(r'^$', views.login),
     url(r'login/$', views.login, name='login'),
     url(r'logout/$', views.logout, name='logout'),
+    url(r'modify_password_view/$', views.modify_password_view, name='modify_password_view'),
+    url(r'modify_password/$', views.modify_password, name='modify_password'),
     url(r'admin/$', views.admin, name='admin'),
     url(r'userList/$', views.user_list, name='userList'),
     # 主页面
