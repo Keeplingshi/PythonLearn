@@ -1,20 +1,205 @@
-{% for contact in contacts %}
-    {# Each "contact" is a Contact model object. #}
-    {{ contact.title }}<br />
-{% endfor %}
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<link rel="stylesheet" href="/static/css/globle.css" />
+<link rel="stylesheet" href="/static/css/button.css" />
 
-<div class="pagination">
-    <span class="step-links">
-        {% if contacts.has_previous %}
-            <a href="?page={{ contacts.previous_page_number }}">previous</a>
-        {% endif %}
+<form id="formId" action="/polls/userList/" method="post">
+    {% csrf_token %}
+	<div class="breadcrumbs" id="userListToolbar">
+		<span class="input-icon" style="margin: 5px;">
 
-        <span class="current">
-            Page {{ contacts.number }} of {{ contacts.paginator.num_pages }}.
-        </span>
+			<input type="text" id="nav-search-input" name="searchText" placeholder="Search ..." class="nav-search-input" autocomplete="off" value="{% if searchText != None %}{{ searchText }}{% endif %}"/>
+			<i class="icon-search nav-search-icon"></i>
+		</span>
 
-        {% if contacts.has_next %}
-            <a href="?page={{ contacts.next_page_number }}">next</a>
-        {% endif %}
-    </span>
-</div>
+		<input id="userDeleteButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="删除"/>
+		<input id="userAddButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="新增"/>
+		<input id="userImportButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="导入用户"/>
+        <input id="userQueryButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="查询"/>
+	</div>
+	<div class="table-responsive">
+		<table id="sample-table-1" class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th class="center"></th>
+					<th>账号</th>
+					<th>操作</th>
+				</tr>
+			</thead>
+
+			<tbody>
+                {% for user in userList %}
+					<tr>
+						<td class="center"></td>
+						<td>{{ user.username }}</td>
+						<td style="width: 260px">
+							<input type="button" class="btn_list_view" value="重置密码" onclick="viewUser('${userDomain.id }')"/>
+                            <input type="button" class="btn_list_delete" value="删除" onclick="deleteUser('${userDomain.id }')"/>
+						</td>
+					</tr>
+                {% endfor %}
+			</tbody>
+		</table>
+		<div id="pageId"><tags:paged /></div>
+	</div>
+</form>
+
+<script type="text/javascript">
+
+	//使权限下拉框默认选择
+ 	$(function(){
+		$("#role_select_id option[value='${roleId}']").attr("selected",true);
+	});
+
+ 	//下拉框选择后给隐藏域赋值
+	$("#role_select_id").change(function(){
+		var roleIdVal=$(this).children('option:selected').val();
+		$("#roleId").val(roleIdVal);
+	});
+
+ 	//查询
+	$("#userQueryButton").click(function(){
+		$("#formId").ajaxSubmit(function(data){
+    	 	$("#content_page").html(data);
+		});
+	});
+
+	//新增用户按钮
+	$("#userAddButton").click(function(){
+	    parent.layer.open({
+	        type: 2,
+	        title: '新增用户',
+	        shadeClose: true, //点击遮罩关闭层
+	        area : ['380px' , '340px'],
+	        offset: ['150px'],
+	        content: '${pageContext.request.contextPath}/admin/user/userAdd',
+	        end: function(){
+				//默认加载用户列表
+	    		$("#formId").ajaxSubmit(function(data){
+	        	 	$("#content_page").html(data);
+	    		});
+	        }
+	    });
+	});
+
+	//多选删除
+	$("#userDeleteButton").click(function(){
+		var checkBoxs=$("table tbody input:checkbox");
+		var userIds=new Array();
+		for(var i=0;i<checkBoxs.length;i++)
+		{
+			var checkBox=checkBoxs[i];
+			if(checkBox.checked){
+				userIds.push(checkBox.value);
+			}
+		}
+		if(userIds.length=='0'){
+			layer.msg('请至少选择一个');
+			return;
+		}
+
+		//询问框
+		layer.confirm('是否确定删除这些账户？', {
+		    btn: ['确定','取消'] //按钮
+		}, function(){
+			console.info("确定");
+			$.ajax({
+				url : "${pageContext.request.contextPath}/admin/user/deleteUsers",
+				async: false,
+				data : {
+					"userIds" : userIds
+				},
+				dataType : "text",
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					layer.msg('删除失败');
+                },
+				success : function(result) {
+					if(result=='success'){
+						//默认加载用户列表
+			        	$("#formId").ajaxSubmit(function(data){
+			        	 	$("#content_page").html(data);
+			    		});
+						parent.layer.msg('删除成功', {
+		     		        time: 1500//1.5s后自动关闭
+		     		    });
+					}else{
+						layer.msg('删除失败');
+					}
+				}
+			});
+
+		}, function(){
+
+		});
+	});
+
+	//list中修改用户按钮
+	function updateUser(userId)
+	{
+	    parent.layer.open({
+	        type: 2,
+	        title: '修改用户',
+	        shadeClose: true,
+	        area : ['380px' , '340px'],
+	        offset: ['150px'],
+	        content: '${pageContext.request.contextPath}/admin/user/userEdit/'+userId,
+	        end: function(){
+	        	//默认加载用户列表
+	        	$("#formId").ajaxSubmit(function(data){
+	        	 	$("#content_page").html(data);
+	    		});
+	        }
+	    });
+	}
+
+	//list中查看用户按钮
+	function viewUser(userId)
+	{
+	    parent.layer.open({
+	        type: 2,
+	        title: '查看用户',
+	        shadeClose: true,
+	        area : ['380px' , '340px'],
+	        offset: ['150px'],
+	        content: '${pageContext.request.contextPath}/admin/user/userView/'+userId
+	    });
+	}
+
+	//删除
+	function deleteUser(userId)
+	{
+		//询问框
+		layer.confirm('是否确定删除？', {
+		    btn: ['确定','取消'] //按钮
+		}, function(){
+	 		//默认加载用户列表
+			$.post("${pageContext.request.contextPath}/admin/user/delete/"+userId, function(result){
+				if(result=='success'){
+					//默认加载用户列表
+		        	$("#formId").ajaxSubmit(function(data){
+		        	 	$("#content_page").html(data);
+		    		});
+					parent.layer.msg('删除成功', {
+	     		        time: 1500//1.5s后自动关闭
+	     		    });
+				}else{
+					layer.msg('删除失败');
+				}
+			});
+		}, function(){
+
+		});
+
+	}
+
+	//点击表格标题栏，选中所有checkbox框
+	$('table th input:checkbox').on('click' , function(){
+
+		var that=this;
+ 		$(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){
+			this.checked = that.checked;
+			$(this).closest('tr').toggleClass('selected');
+		});
+	});
+
+</script>

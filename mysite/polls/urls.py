@@ -1,18 +1,19 @@
 from django.conf.urls import url
 
 from polls import views
+from polls import user_views
 
 urlpatterns = [
     # ex : /polls/
     # url(r'^static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': mysite.settings.STATIC_URL}),
     # 管理页面
     # url(r'^$', views.login),
-    url(r'login/$', views.login, name='login'),
-    url(r'logout/$', views.logout, name='logout'),
-    url(r'modify_password_view/$', views.modify_password_view, name='modify_password_view'),
-    url(r'modify_password/$', views.modify_password, name='modify_password'),
+    url(r'login/$', user_views.login, name='login'),
+    url(r'logout/$', user_views.logout, name='logout'),
+    url(r'modify_password_view/$', user_views.modify_password_view, name='modify_password_view'),
+    url(r'modify_password/$', user_views.modify_password, name='modify_password'),
     url(r'admin/$', views.admin, name='admin'),
-    url(r'userList/$', views.user_list, name='userList'),
+    url(r'userList/$', user_views.user_list, name='userList'),
     # 主页面
     # url(r'index/$', views.index, name='index'),
     # 投票结果页面
