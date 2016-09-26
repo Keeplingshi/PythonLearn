@@ -12,7 +12,6 @@
 			<i class="icon-search nav-search-icon"></i>
 		</span>
 
-		<input id="userDeleteButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="删除"/>
 		<input id="userAddButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="新增"/>
 		<input id="userImportButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="导入用户"/>
         <input id="userQueryButton" type="button" class="button button-primary button-rounded button-small" style="margin: 5px;float: right;" value="查询"/>
@@ -23,6 +22,7 @@
 				<tr>
 					<th class="center"></th>
 					<th>账号</th>
+                    <th>用户类型</th>
 					<th>操作</th>
 				</tr>
 			</thead>
@@ -32,30 +32,66 @@
 					<tr>
 						<td class="center"></td>
 						<td>{{ user.username }}</td>
+                        <td>
+                            {% if user.is_superuser %}管理员{% else %}普通用户{% endif %}
+                        </td>
 						<td style="width: 260px">
-							<input type="button" class="btn_list_view" value="重置密码" onclick="viewUser('${userDomain.id }')"/>
-                            <input type="button" class="btn_list_delete" value="删除" onclick="deleteUser('${userDomain.id }')"/>
+                            {% ifnotequal  user.username currentUser.username %}
+                            	<input type="button" class="btn_list_view" value="重置密码" onclick="resetPassword({{ user.id }})"/>
+                                <input type="button" class="btn_list_delete" value="删除" onclick="deleteUser({{ user.id }})"/>
+                            {% endifnotequal  %}
 						</td>
 					</tr>
                 {% endfor %}
 			</tbody>
 		</table>
-		<div id="pageId"><tags:paged /></div>
+		<div id="pageId">
+            <table class="ui-pg-table" style="margin:auto;">
+                <tbody>
+                    <tr>
+                        <td id="first_grid-pager" class="ui-pg-button ui-corner-all" style="cursor: default;">
+                            <span class="ui-icon icon-double-angle-left bigger-140"></span>
+                        </td>
+                        <td id="prev_grid-pager" class="ui-pg-button ui-corner-all" style="cursor: default;">
+                            <span class="ui-icon icon-angle-left bigger-140"></span>
+                        </td>
+                        <td class="ui-pg-button ui-state-disabled" style="width: 4px; cursor: default;">
+                            <span class="ui-separator"></span>
+                        </td>
+                        <td dir="ltr">
+                            Page <input id="ui-pg-input" class="ui-pg-input" type="text" size="2" maxlength="7" value="${pageInfo.currentPageNo }" onkeyup="(this.v=function(){this.value=this.value.replace(/[^0-9-]+/,'');}).call(this)" onblur="this.v();" onkeypress="EnterPress(event)" onkeydown="EnterPress()" > of
+                            <span id="sp_1_grid-pager">${pageInfo.totalPages }</span>
+                        </td>
+                        <td class="ui-pg-button ui-state-disabled" style="width: 4px; cursor: default;">
+                            <span class="ui-separator"></span>
+                        </td>
+                        <td id="next_grid-pager" class="ui-pg-button ui-corner-all" style="cursor: default;">
+                            <span class="ui-icon icon-angle-right bigger-140"></span>
+                        </td>
+                        <td id="last_grid-pager" class="ui-pg-button ui-corner-all" style="cursor: default;">
+                            <span class="ui-icon icon-double-angle-right bigger-140"></span>
+                        </td>
+                        <td dir="ltr">
+                            <select id="pg-selbox" class="ui-pg-selbox">
+                                <option value="10" selected="selected">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type='text' style='display:none'/>
+            <input type="hidden" id="currentPageNo" name="pageInfo.currentPageNo" value="${pageInfo.currentPageNo}" >
+            <input type="hidden" id="sizePerPage" name="pageInfo.sizePerPage" value="${pageInfo.sizePerPage}" >
+            <input type="hidden" id="totalPages" name="pageInfo.totalPages" value="${pageInfo.totalPages}" >
+        </div>
 	</div>
 </form>
 
 <script type="text/javascript">
-
-	//使权限下拉框默认选择
- 	$(function(){
-		$("#role_select_id option[value='${roleId}']").attr("selected",true);
-	});
-
- 	//下拉框选择后给隐藏域赋值
-	$("#role_select_id").change(function(){
-		var roleIdVal=$(this).children('option:selected').val();
-		$("#roleId").val(roleIdVal);
-	});
 
  	//查询
 	$("#userQueryButton").click(function(){
@@ -72,7 +108,7 @@
 	        shadeClose: true, //点击遮罩关闭层
 	        area : ['380px' , '340px'],
 	        offset: ['150px'],
-	        content: '${pageContext.request.contextPath}/admin/user/userAdd',
+	        content: '/polls/user/userAdd/',
 	        end: function(){
 				//默认加载用户列表
 	    		$("#formId").ajaxSubmit(function(data){
@@ -82,87 +118,38 @@
 	    });
 	});
 
-	//多选删除
-	$("#userDeleteButton").click(function(){
-		var checkBoxs=$("table tbody input:checkbox");
-		var userIds=new Array();
-		for(var i=0;i<checkBoxs.length;i++)
-		{
-			var checkBox=checkBoxs[i];
-			if(checkBox.checked){
-				userIds.push(checkBox.value);
-			}
-		}
-		if(userIds.length=='0'){
-			layer.msg('请至少选择一个');
-			return;
-		}
-
+	//重置密码
+	function resetPassword(userId)
+	{
 		//询问框
-		layer.confirm('是否确定删除这些账户？', {
+		layer.confirm('是否重置密码为用户名？', {
 		    btn: ['确定','取消'] //按钮
 		}, function(){
-			console.info("确定");
+	 		//
 			$.ajax({
-				url : "${pageContext.request.contextPath}/admin/user/deleteUsers",
-				async: false,
-				data : {
-					"userIds" : userIds
-				},
-				dataType : "text",
-				error: function(XMLHttpRequest, textStatus, errorThrown) {
-					layer.msg('删除失败');
-                },
-				success : function(result) {
-					if(result=='success'){
-						//默认加载用户列表
-			        	$("#formId").ajaxSubmit(function(data){
-			        	 	$("#content_page").html(data);
-			    		});
-						parent.layer.msg('删除成功', {
-		     		        time: 1500//1.5s后自动关闭
-		     		    });
-					}else{
-						layer.msg('删除失败');
-					}
-				}
+				url : "/polls/user/resetPassword/",
+				type : "POST",
+				cache:false,
+				async:false,
+				data : {userId : userId},
+				success : function(data) {
+                    if(data=='success'){
+                        //默认加载用户列表
+                        $("#formId").ajaxSubmit(function(data){
+                            $("#content_page").html(data);
+                        });
+                        parent.layer.msg('重置成功', {
+                            time: 1500//1.5s后自动关闭
+                        });
+                    }else{
+                        layer.msg('重置失败');
+                    }
+                }
 			});
 
 		}, function(){
 
 		});
-	});
-
-	//list中修改用户按钮
-	function updateUser(userId)
-	{
-	    parent.layer.open({
-	        type: 2,
-	        title: '修改用户',
-	        shadeClose: true,
-	        area : ['380px' , '340px'],
-	        offset: ['150px'],
-	        content: '${pageContext.request.contextPath}/admin/user/userEdit/'+userId,
-	        end: function(){
-	        	//默认加载用户列表
-	        	$("#formId").ajaxSubmit(function(data){
-	        	 	$("#content_page").html(data);
-	    		});
-	        }
-	    });
-	}
-
-	//list中查看用户按钮
-	function viewUser(userId)
-	{
-	    parent.layer.open({
-	        type: 2,
-	        title: '查看用户',
-	        shadeClose: true,
-	        area : ['380px' , '340px'],
-	        offset: ['150px'],
-	        content: '${pageContext.request.contextPath}/admin/user/userView/'+userId
-	    });
 	}
 
 	//删除
@@ -172,34 +159,104 @@
 		layer.confirm('是否确定删除？', {
 		    btn: ['确定','取消'] //按钮
 		}, function(){
-	 		//默认加载用户列表
-			$.post("${pageContext.request.contextPath}/admin/user/delete/"+userId, function(result){
-				if(result=='success'){
-					//默认加载用户列表
-		        	$("#formId").ajaxSubmit(function(data){
-		        	 	$("#content_page").html(data);
-		    		});
-					parent.layer.msg('删除成功', {
-	     		        time: 1500//1.5s后自动关闭
-	     		    });
-				}else{
-					layer.msg('删除失败');
-				}
+	 		//
+			$.ajax({
+				url : "/polls/user/delete/",
+				type : "POST",
+				cache:false,
+				async:false,
+				data : {userId : userId},
+				success : function(data) {
+                    if(data=='success'){
+                        //默认加载用户列表
+                        $("#formId").ajaxSubmit(function(data){
+                            $("#content_page").html(data);
+                        });
+                        parent.layer.msg('删除成功', {
+                            time: 1500//1.5s后自动关闭
+                        });
+                    }else{
+                        layer.msg('删除失败');
+                    }
+                }
 			});
+
 		}, function(){
 
 		});
 
 	}
 
-	//点击表格标题栏，选中所有checkbox框
-	$('table th input:checkbox').on('click' , function(){
-
-		var that=this;
- 		$(this).closest('table').find('tr > td:first-child input:checkbox').each(function(){
-			this.checked = that.checked;
-			$(this).closest('tr').toggleClass('selected');
-		});
+	$(function(){
+		var pageSize = "${pageInfo.sizePerPage}";
+		$("#pg-selbox option[value='"+pageSize+"']").attr("selected",true);
 	});
 
+	$("#pg-selbox").change(function(){
+		var sizePerPage=$(this).children('option:selected').val();
+
+		$("#sizePerPage").val(sizePerPage);
+		doPage();
+	});
+
+	$("#first_grid-pager").click(function(){
+		$("#currentPageNo").val("1");
+		layer.msg("第一页！", {
+			offset: ['260px'],
+			time: 1500//1.5s后自动关闭
+		});
+		doPage();
+	});
+
+	$("#prev_grid-pager").click(function(){
+		if("${pageInfo.currentPageNo}"==1){
+			layer.msg("当前为第一页！", {
+				offset: ['260px'],
+				time: 1500//1.5s后自动关闭
+			});
+			return;
+		}
+		$("#currentPageNo").val("${pageInfo.currentPageNo-1}");
+		doPage();
+	});
+
+	$("#next_grid-pager").click(function(){
+ 		if("${pageInfo.currentPageNo}"=="${pageInfo.totalPages}"){
+			layer.msg("当前为最后一页！", {
+				offset: ['260px'],
+				time: 1500//1.5s后自动关闭
+			});
+			return;
+		}
+		$("#currentPageNo").val("${pageInfo.currentPageNo+1}");
+		doPage();
+	});
+
+	$("#last_grid-pager").click(function(){
+		$("#currentPageNo").val("${pageInfo.totalPages}");
+		layer.msg("最后一页！", {
+			offset: ['260px'],
+			time: 1500//1.5s后自动关闭
+		});
+		doPage();
+	});
+
+	//输入页数，回车响应时间
+	function EnterPress(e){ //传入 event
+		var e = e || window.event;
+		if(e.keyCode == 13){
+			$("#currentPageNo").val($("#ui-pg-input").val());
+			doPage();
+		}
+	}
+
+	//翻页
+	function doPage()
+	{
+		var form = $("#formId");
+    	form.ajaxSubmit(function(data){
+    	 	var $target = $("#content_page");
+  	   	 	$target.html(data);
+		});
+	}
 </script>

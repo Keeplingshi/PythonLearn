@@ -1,0 +1,63 @@
+<link rel="stylesheet" href="/static/css/button.css" />
+<link rel="stylesheet" href="/static/css/addEditView.css" />
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/jquery.form.js"></script>
+<script src="/static/ui/layer/layer.js"></script>
+<script src="/static/js/validform.js"></script>
+
+<form id="userAddFormId" action="/polls/user/save/" method="post">
+    {% csrf_token %}
+	<input type="hidden" id="roleId" name="roleId" />
+	<table>
+		<tr>
+			<td class="lesta-150">账号：</td>
+			<td class="lestb">
+				<input type="text" id="username" name="username" class="input_text_a" placeholder="请输入账号">
+			</td>
+		</tr>
+		<tr>
+			<td class="lesta-150">密码：</td>
+			<td class="lestb">密码默认为用户名</td>
+		</tr>
+		<tr>
+			<td class="lesta-150">角色：</td>
+			<td class="lestb">
+				<select id="role_select_add_id" name="role" class="select_style">
+					<option value="1">普通用户</option>
+                    <option value="0">管理员</option>
+				</select>
+			</td>
+		</tr>
+	</table>
+	<input id="saveButton" type="button" class="button button-highlight button-rounded button-small" style="margin-top:40px; margin-left: 140px;" value="确定"/>
+</form>
+
+<script>
+
+	$("#saveButton").click(function(){
+
+		var usernameVal=$("#username").val();
+
+		if(!isNumberOrLetter(usernameVal)){
+			layer.tips('用户名只能是数字或字母', '#username');
+			return;
+		}
+
+		var form = $("#userAddFormId");
+		form.ajaxSubmit(function(result){
+			if(result=='success'){
+
+				parent.layer.msg('添加成功', {
+     		        time: 1500//1.5s后自动关闭
+     		    });
+				//关闭当前新增页面页
+				var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+				parent.layer.close(index); //再执行关闭
+			}else{
+				layer.msg('新增失败');
+			}
+		});
+
+	});
+
+</script>

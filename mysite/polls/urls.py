@@ -14,6 +14,10 @@ urlpatterns = [
     url(r'modify_password/$', user_views.modify_password, name='modify_password'),
     url(r'admin/$', views.admin, name='admin'),
     url(r'userList/$', user_views.user_list, name='userList'),
+    url(r'user/userAdd/$', user_views.user_add, name='userAdd'),
+    url(r'user/save/$', user_views.user_save, name='userSave'),
+    url(r'user/resetPassword/$', user_views.reset_password, name='userResetPassword'),
+    url(r'user/delete/$', user_views.delete, name='delete'),
     # 主页面
     # url(r'index/$', views.index, name='index'),
     # 投票结果页面

@@ -2,8 +2,8 @@
 
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import auth
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Permission, User
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -16,11 +16,11 @@ def login(request):
     password = request.POST.get('password')
     user = auth.authenticate(username=username, password=password)
     if user is not None:
-        if user.is_active:
-            auth.login(request, user)
+        auth.login(request, user)
+        if user.is_superuser:
             return HttpResponseRedirect('/polls/admin')
         else:
-            print("Your account has been disabled!")
+            return HttpResponseRedirect('/polls/login')
     else:
         # 如果存在用户名密码，但不正确，则提示
         if username is not None and password is not None:
@@ -62,21 +62,84 @@ def modify_password(request):
 
 # 账号管理页面
 @csrf_exempt
+@login_required
+@permission_required('auth.add_user')
 def user_list(request):
+    current_user = auth.get_user(request)
+
     search_text = request.POST.get('searchText')
     if search_text is not None:
         users = User.objects.all().filter(username__contains=search_text)
     else:
         users = User.objects.all()
-    paginator = Paginator(users, 10)  # Show 25 contacts per page
-    page = request.GET.get('page')
-    try:
-        contacts = paginator.page(1)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        contacts = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        contacts = paginator.page(paginator.num_pages)
 
-    return render(request, 'polls/user/userList.html', {'userList': users, 'searchText': search_text})
+    paginator = Paginator(users, 10)
+
+    # try:
+    #     contacts = paginator.page(1)
+    # except PageNotAnInteger:
+    #     # If page is not an integer, deliver first page.
+    #     contacts = paginator.page(1)
+    # except EmptyPage:
+    #     # If page is out of range (e.g. 9999), deliver last page of results.
+    #     contacts = paginator.page(paginator.num_pages)
+
+    return render(request, 'polls/user/userList.html',
+                  {'userList': users, 'searchText': search_text, 'currentUser': current_user})
+
+
+# 新增用户
+@login_required
+@permission_required('auth.add_user')
+def user_add(request):
+
+    return render(request, 'polls/user/userAdd.html')
+
+
+# 保存用户
+@csrf_exempt
+@login_required
+@permission_required('auth.add_user')
+def user_save(request):
+    user_name = request.POST.get('username')
+    role = request.POST.get('role')
+    # 用户已存在
+    if len(User.objects.filter(username=user_name)) > 0:
+        return HttpResponse("exists")
+
+    # 保存的用户类型，超级管理员，普通用户
+    if role == '0':
+        User.objects.create_superuser(username=user_name, email=user_name, password=user_name)
+        return HttpResponse("success")
+    elif role == '1':
+        User.objects.create_user(username=user_name, password=user_name)
+        return HttpResponse("success")
+
+    return HttpResponse("error")
+
+
+# 重置用户密码
+@csrf_exempt
+@login_required
+@permission_required('auth.add_user')
+def reset_password(request):
+    user_id = request.POST.get('userId')
+    user = User.objects.get(id=user_id)
+    if user is not None:
+        User.set_password(user, user.username)
+        User.save(user)
+        return HttpResponse("success")
+    return HttpResponse("error")
+
+
+# 删除用户
+@csrf_exempt
+@login_required
+@permission_required('auth.add_user')
+def delete(request):
+    user_id = request.POST.get('userId')
+    user = User.objects.get(id=user_id)
+    if user is not None:
+        user.delete()
+        return HttpResponse("success")
+    return HttpResponse("error")
