@@ -73,19 +73,19 @@ def user_list(request):
     else:
         users = User.objects.all()
 
+    # 分页
     paginator = Paginator(users, 10)
+    page = request.POST.get('page')  # 获取页码
 
-    # try:
-    #     contacts = paginator.page(1)
-    # except PageNotAnInteger:
-    #     # If page is not an integer, deliver first page.
-    #     contacts = paginator.page(1)
-    # except EmptyPage:
-    #     # If page is out of range (e.g. 9999), deliver last page of results.
-    #     contacts = paginator.page(paginator.num_pages)
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
 
-    return render(request, 'polls/user/userList.html',
-                  {'userList': users, 'searchText': search_text, 'currentUser': current_user})
+    return render(request, 'polls/user/userList.html', {'userList': users,
+                                                        'searchText': search_text, 'currentUser': current_user})
 
 
 # 新增用户
