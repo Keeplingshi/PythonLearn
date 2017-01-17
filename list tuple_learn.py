@@ -2,7 +2,7 @@
 """
 Created on Tue Jun 21 15:26:26 2016
 
-@author: Administrator
+@author: chenbin
 """
 
 #list。list是一种有序的集合，可以随时添加和删除其中的元素。

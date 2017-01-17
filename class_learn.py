@@ -2,11 +2,12 @@
 """
 Created on Sat Jul 16 15:29:23 2016
 
-@author: Administrator
+@author: chenbin
 """
 
 class Student(object):
 
+    #注意到__init__方法的第一个参数永远是self，表示创建的实例本身
     def __init__(self, name, score):
         self.__name = name
         self.__score = score
@@ -20,7 +21,7 @@ class Student(object):
     def set_score(self, score):
         if 0 <= score <= 100:
             self.__score = score
-        else:
+        else:            
             raise ValueError('bad score')
 
     def get_grade(self):
